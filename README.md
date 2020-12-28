@@ -273,7 +273,7 @@ CREATE TABLE SALED_SUPPL_INFO
   PRIMARY KEY(History_code, Carte_sn, Bindex));
 ```
 
-<a name=""/>
+<a name="실행"/>
 
 ## 4. 실행 화면
 
