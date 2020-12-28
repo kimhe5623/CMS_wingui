@@ -1,0 +1,47 @@
+/* 날짜 입력받는 Panel - 생일 입력받을 때 사용 */
+package MainSource;
+
+import java.awt.*;
+import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import javax.swing.*;
+
+public class datePanel {
+
+	public JPanel panel = new JPanel();
+	public TextField tf[] = new TextField[3];
+
+	public datePanel() {
+
+		tf[0].setPreferredSize(new Dimension(5, 1));
+		tf[1].setPreferredSize(new Dimension(3, 1));
+		tf[2].setPreferredSize(new Dimension(3, 1));
+
+		panel.setLayout(new FlowLayout());
+		panel.add(tf[0]);
+		panel.add(new JLabel("년"));
+		panel.add(tf[1]);
+		panel.add(new JLabel("월"));
+		panel.add(tf[2]);
+		panel.add(new JLabel("일"));
+	}
+
+	public JPanel getPanel() {
+		return panel;
+	}
+
+	public Date getDate() {
+		String From = tf[0].getText() + tf[1].getText() + tf[2].getText();
+		SimpleDateFormat transFormat = new SimpleDateFormat("yyyymmdd");
+		Date To = null;
+		try {
+			To = (Date) transFormat.parse(From);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return To;
+
+	}
+}

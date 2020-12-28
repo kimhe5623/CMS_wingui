@@ -1,0 +1,181 @@
+package Birth_customer;
+
+import java.sql.*;
+import java.util.Date;
+import java.util.Vector;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+import All_Customer.All_Customer_info;
+import All_Customer.Customer_info;
+import All_Customer.EditCustomerDialog;
+import MainSource.DB_Connection;
+
+public class BirthCustomerPage {
+
+	JFrame BirthCustomerP = new JFrame("생일 고객 조회");
+	private int width = 1000, height = 500;
+	private Font font1 = new Font("monospace", Font.BOLD, 15);
+	private Font font2 = new Font("monospace", Font.BOLD, 20);
+	private Object thisMonth_Datas[][], nextMonth_Datas[][];
+	private String ColumnNames[] = { "아이디", "이름", "성별", "생일", "연락처" };
+
+	/* 생성자 */
+	public BirthCustomerPage(JFrame BeforePage) {
+
+		BeforePage.setVisible(false);
+		BirthCustomerP.setBounds(300, 200, width, height);
+		BirthCustomerP.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		MyactionListener listener = new MyactionListener();
+
+		/* 화면 디자인 */
+		JPanel TopPanel = new JPanel();
+		TopPanel.setSize(width, height / 10);
+		TopPanel.setLayout(new BorderLayout());
+		JButton menuBtn = new JButton("메뉴");
+		menuBtn.setFont(font2);
+		menuBtn.addActionListener(listener);
+		TopPanel.add(menuBtn, BorderLayout.WEST);
+		// "메뉴 " 버튼 패널
+
+		BirthSearch();
+
+		// 해당 고객 거래 기록 테이블
+		DefaultTableModel defaultThisMonthTab = new DefaultTableModel(thisMonth_Datas, ColumnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		DefaultTableModel defaultNextMonthTab = new DefaultTableModel(nextMonth_Datas, ColumnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		JTable thisMonthTable = new JTable(defaultThisMonthTab);
+		JTable nextMonthTable = new JTable(defaultNextMonthTab);
+		JScrollPane thisMonthScrollPane = new JScrollPane(thisMonthTable);
+		JScrollPane nextMonthScrollPane = new JScrollPane(nextMonthTable);
+		thisMonthTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 단일 선택
+		nextMonthTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 단일 선택
+		
+		JLabel tm, nm;
+		
+		Box Box_thisMonth = Box.createVerticalBox();
+		Box_thisMonth.add(tm = new JLabel("[ 이 달의 생일 고객 ]")); tm.setFont(font2);
+		Box_thisMonth.add(thisMonthScrollPane);
+		
+		Box Box_nextMonth = Box.createVerticalBox();
+		Box_nextMonth.add(nm = new JLabel("[ 다음 달 생일 고객 ]")); nm.setFont(font2);
+		Box_nextMonth.add(nextMonthScrollPane);
+		
+		// tablebox 2개 -> Box_for_info
+		Box Box_for_info = Box.createHorizontalBox();
+		Box_for_info.add(Box_thisMonth);
+		Box_for_info.add(Box_nextMonth);
+
+		// 컨테이너에 TopPanel, Box_for_info, bottomPanel 삽입
+		Container ContentPane = BirthCustomerP.getContentPane();
+		ContentPane.add(TopPanel, BorderLayout.NORTH);
+		ContentPane.add(Box_for_info, BorderLayout.CENTER);
+
+		BirthCustomerP.setVisible(true);
+
+	}
+
+	/* 리스너 함수 등록 */
+	private class MyactionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			JButton pressed = (JButton) e.getSource();
+			if (pressed.getText().equals("메뉴")) // "메뉴" 클릭
+				new CMS_MainPage.MainPage(BirthCustomerP);
+		}
+	}
+
+	private void BirthSearch() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		String curdate = dateFormat.format(date);
+		String curMonth = dateFormat.format(date).substring(5, 7);
+		Integer nextMonthInt = Integer.parseInt(curMonth) == 12 ? 1 : Integer.parseInt(curMonth)+1;
+		String nextMonth = nextMonthInt < 10 ? "0"+nextMonthInt.toString() : nextMonthInt.toString();
+		// 날짜 받아오기
+		
+		System.out.println(date);
+		System.out.println(curdate);
+		System.out.println(curMonth);
+		System.out.println(nextMonth);
+		
+		String Search[] = { "SELECT Cid, Cname, Csex, Cbirth, Cphone FROM CUSTOMER"
+				+ " WHERE Cbirth like '%/"+curMonth+"/%' ORDER BY Cid ASC"	// 이번 달
+				,"SELECT Cname, Csex, Cbirth, Cphone FROM CUSTOMER"
+						+ " WHERE Cbirth like '%/"+nextMonth+"/%' ORDER BY Cid ASC"};	// 다음 달
+		// DB연결
+		Connection conn = new DB_Connection().conn;
+		Statement thisStmt = null, nextStmt = null;
+		ResultSet thisRs = null, nextRs = null;
+
+		try {
+			thisStmt = conn.createStatement(); 	nextStmt = conn.createStatement(); // 쿼리 준비
+			thisStmt.execute(Search[0]); 		nextStmt.executeQuery(Search[1]); // 쿼리 실행
+			thisRs = thisStmt.executeQuery(Search[0]); // 데이터 가져오기
+			nextRs = nextStmt.executeQuery(Search[1]);
+
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+
+		// 데이터 담기1
+		Birth_Cinfo thisMonth_info = new Birth_Cinfo();
+		Birth_Cinfo nextMonth_info = new Birth_Cinfo();
+		Vector<Object[]> T = new Vector<Object[]>();
+		Vector<Object[]> N = new Vector<Object[]>();
+		try {
+			while (thisRs.next()) {
+				int i = 1;
+				thisMonth_info.Cid = thisRs.getString(i++);	thisMonth_info.Cname = thisRs.getString(i++);
+				thisMonth_info.Csex = thisRs.getString(i++);		thisMonth_info.Cbirth = thisRs.getDate(i++);
+				thisMonth_info.Cphone = thisRs.getString(i++);
+				T.add(thisMonth_info.toArray()); // 벡터에 한 행씩 담기
+				System.out.println(thisMonth_info.Cid+" "+thisMonth_info.Cname + " " + thisMonth_info.Csex + " " + thisMonth_info.Cphone + " "
+						+ thisMonth_info.Cbirth);
+			}
+			while (nextRs.next()) {
+				int i = 1;
+				nextMonth_info.Cid = nextRs.getString(i++);	nextMonth_info.Cname = nextRs.getString(i++);
+				nextMonth_info.Csex = nextRs.getString(i++);		nextMonth_info.Cbirth = nextRs.getDate(i++);
+				nextMonth_info.Cphone = nextRs.getString(i++);
+				N.add(nextMonth_info.toArray()); // 벡터에 한 행씩 담기
+				System.out.println(nextMonth_info.Cid+" "+nextMonth_info.Cname + " " + nextMonth_info.Csex + " " + nextMonth_info.Cphone + " "
+						+ nextMonth_info.Cbirth);
+			}
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+
+		DB_Connection.Disconnection(thisRs);	DB_Connection.Disconnection(nextRs);	
+		DB_Connection.Disconnection(thisStmt);	DB_Connection.Disconnection(nextStmt);
+		DB_Connection.Disconnection();
+		
+		int T_num = T.size(), N_num = N.size();
+		thisMonth_Datas = new Object[T_num][5];	nextMonth_Datas = new Object[N_num][5];
+		
+		for (int i = 0; i < T_num; i++) 	thisMonth_Datas[i] = T.get(i);
+		for (int i = 0; i < N_num; i++) 	nextMonth_Datas[i] = N.get(i);
+
+		T.removeAllElements();
+		N.removeAllElements();
+
+
+
+	}
+
+}

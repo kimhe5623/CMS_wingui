@@ -1,0 +1,97 @@
+package Birth_customer;
+
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+import All_Customer.All_Customer_info;
+import All_Customer.EditCustomerDialog;
+
+public class BirthCustomerPage {
+	
+	JFrame BirthCustomerP = new JFrame("생일 고객 조회");
+	private int width = 1000, height = 500;
+	private Font font1 = new Font("monospace", Font.BOLD, 15);
+	private Font font2 = new Font("monospace", Font.BOLD, 20);
+	private Object thisMonth[][], nextMonth[][];
+	private String ColumnNames[] = {"이름", "성별", "생일", "연락처"};
+	
+	
+	/* 생성자 */
+	public BirthCustomerPage(JFrame BeforePage) {
+		
+		BeforePage.setVisible(false);
+		BirthCustomerP.setBounds(300, 200, width, height);
+		BirthCustomerP.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		MyactionListener listener = new MyactionListener();
+
+		/* 화면 디자인 */
+		JPanel TopPanel = new JPanel();
+		TopPanel.setSize(width, height / 10);
+		TopPanel.setLayout(new BorderLayout());
+		JButton menuBtn = new JButton("메뉴");
+		menuBtn.setFont(font2);
+		menuBtn.addActionListener(listener);
+		TopPanel.add(menuBtn, BorderLayout.WEST);
+		// "메뉴 " 버튼 패널
+		
+		BirthSearch();
+		
+		// 해당 고객 거래 기록 테이블
+		DefaultTableModel defaultThisMonthTab = new DefaultTableModel(thisMonth, ColumnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		DefaultTableModel defaultNextMonthTab = new DefaultTableModel(nextMonth, ColumnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		JTable thisMonthTable = new JTable(defaultThisMonthTab);
+		JTable nextMonthTable = new JTable(defaultNextMonthTab);
+		JScrollPane thisMonthScrollPane = new JScrollPane(thisMonthTable);
+		JScrollPane nextMonthScrollPane = new JScrollPane(nextMonthTable);
+		thisMonthTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 단일 선택
+		nextMonthTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 단일 선택
+
+		
+		// 개인정보 & 테이블 2개 -> Box_for_info
+		Box Box_for_info = Box.createVerticalBox();
+		Box_for_info.add(thisMonthScrollPane);
+		Box_for_info.add(nextMonthScrollPane);
+
+
+		// 컨테이너에 TopPanel, Box_for_info, bottomPanel 삽입
+		Container ContentPane = BirthCustomerP.getContentPane();
+		ContentPane.add(TopPanel, BorderLayout.NORTH);
+		ContentPane.add(Box_for_info, BorderLayout.CENTER);
+		
+		BirthCustomerP.setVisible(true);
+
+	}
+
+	/* 리스너 함수 등록 */
+	private class MyactionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			JButton pressed = (JButton) e.getSource();
+			if (pressed.getText().equals("메뉴")) // "메뉴" 클릭
+				new CMS_MainPage.MainPage(BirthCustomerP);
+		}
+	}
+	
+	private void BirthSearch() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd HH:mm:ss");
+		Date date = new Date();
+	}
+
+}

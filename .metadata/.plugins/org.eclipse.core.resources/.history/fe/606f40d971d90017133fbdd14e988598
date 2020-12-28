@@ -1,0 +1,179 @@
+package All_Customer;
+
+import java.sql.*;
+import java.util.Vector;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+import MainSource.DB_Connection;
+
+public class DetailsOfCustomer {
+	private JFrame CustomerDetailsPage = null;
+	private int width = 1000, height = 500;
+	private Font font1 = new Font("monospace", Font.BOLD, 15);
+	private Font font2 = new Font("monospace", Font.BOLD, 20);
+	private String personalInfo[] = { "아이디: ", "이름: ", "성별: ", "연락처: ", "생일: ", "최근 방문 일자: ", "등급: ", "가용 포인트: ",
+			"누적 지불 금액: " };
+	private Object serviceO[][] = null, productO[][] = null;
+	private String serviceColumnNames[] = { "기록코드", "디자이너 이름", "서비스 이름", "사용 포인트", "지불 금액", "적립 포인트", "가용 포인트",
+			"방문 날짜" };
+	private String productColumnNames[] = { "기록코드", "상품 이름", "사용 포인트", "지불 금액", "적립 포인트", "가용 포인트", "방문날짜", "구매 수량" };
+	private Connection conn = null;
+	private PreparedStatement psmt = null;
+
+	/* 생성자 */
+	public DetailsOfCustomer(JFrame BeforePage, Object One_s_Info[]) {
+		BeforePage.setVisible(false);
+		CustomerDetailsPage = new JFrame("고객 상세정보");
+		CustomerDetailsPage.setBounds(300, 200, width, height);
+		CustomerDetailsPage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		MyactionListener listener = new MyactionListener();
+		/* 화면 디자인 */
+		JPanel TopPanel = new JPanel();
+		TopPanel.setSize(width, height / 10);
+		TopPanel.setLayout(new BorderLayout());
+		JButton menuBtn = new JButton("메뉴");
+		menuBtn.setFont(font2);
+		menuBtn.addActionListener(listener);
+		TopPanel.add(menuBtn, BorderLayout.WEST);
+		// "메뉴" & "뒤로" 버튼 패널
+		JButton BackBtn = new JButton("뒤로");
+		BackBtn.setFont(font2);
+		BackBtn.addActionListener(listener);
+		TopPanel.add(BackBtn, BorderLayout.EAST);
+
+		// 개인 정보 패널
+		JPanel Cpersonal_info = new JPanel();
+		Cpersonal_info.setSize(width, height / 10 * 1);
+		Cpersonal_info.setLayout(new FlowLayout());
+		JLabel tmp = null;
+		for (int i = 0; i < 9; i++) {
+			Cpersonal_info.add(tmp = new JLabel(personalInfo[i] + One_s_Info[i]));
+			tmp.setFont(font1);
+		}
+		
+		HistorySearch((String)One_s_Info[0]);
+		
+		// 해당 고객 거래 기록 테이블
+		DefaultTableModel defaultServiceTab = new DefaultTableModel(serviceO, serviceColumnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		DefaultTableModel defaultProductTab = new DefaultTableModel(productO, productColumnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		JTable serviceTable = new JTable(defaultServiceTab);
+		JTable productTable = new JTable(defaultProductTab);
+		JScrollPane serviceScrollPane = new JScrollPane(serviceTable);
+		JScrollPane productScrollPane = new JScrollPane(productTable);
+//		serviceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 단일 선택
+//		productTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 단일 선택
+
+		
+		// 개인정보 & 테이블 2개 -> Box_for_info
+		Box Box_for_info = Box.createVerticalBox();
+		Box_for_info.add(Cpersonal_info);
+		Box_for_info.add(serviceScrollPane);
+		Box_for_info.add(productScrollPane);
+
+		// 편집 버튼 -> bottomPanel
+		JPanel bottomPanel = new JPanel();
+		JButton EditBtn = new JButton("편집");
+		bottomPanel.add(EditBtn);
+
+		// 컨테이너에 TopPanel, Box_for_info, bottomPanel 삽입
+		Container ContentPane = CustomerDetailsPage.getContentPane();
+		ContentPane.add(TopPanel, BorderLayout.NORTH);
+		ContentPane.add(Box_for_info, BorderLayout.CENTER);
+		ContentPane.add(bottomPanel, BorderLayout.SOUTH);
+		
+		CustomerDetailsPage.setVisible(true);
+
+		// 개인 정보 편집
+
+	}
+
+	public void HistorySearch(String Cid) {
+		String Query[] = {
+				"SELECT history_code, dname, service_name, used_point"
+						+ ", payment, point, usable_point, cdate FROM service_history_view "
+						+ "WHERE cid = ? ORDER BY history_code asc", // [0] 서비스 history
+				"SELECT history_code, bname, used_point, payment, point, usable_point, "
+						+ "bdate, saled_num FROM product_historylist WHERE cid = ? ORDER BY history_code asc" };
+						// [1] 상품 history
+
+		// DB연결
+		new DB_Connection();
+		this.conn = DB_Connection.conn;
+		try {
+			
+			psmt = conn.prepareStatement(Query[0]);
+			psmt.setString(1, Cid);
+			ResultSet rs = psmt.executeQuery();
+			
+			personal_Service_history psh = new personal_Service_history();
+			Vector<Object[]> S = new Vector<Object[]>();
+			while(rs.next()) {
+				int i = 1;
+				psh.History_code = rs.getString(i++); psh.Dname = rs.getString(i++);
+				psh.Service_name = rs.getString(i++); psh.Used_point = rs.getInt(i++);
+				psh.Payment = rs.getInt(i++); psh.Point = rs.getInt(i++);
+				psh.Usable_point = rs.getInt(i++); psh.Cdate = rs.getDate(i++);
+				S.add(psh.toArray());	// 한 행씩 벡터에 담기
+				System.out.println(psh.History_code+" "+psh.Dname+" "+psh.Service_name+" "
+						+psh.Used_point+" "+psh.Payment+" "+psh.Point+" "+psh.Usable_point+
+						" "+psh.Cdate);
+			}
+			
+			psmt = conn.prepareStatement(Query[1]);
+			psmt.setString(1, Cid);
+			rs = psmt.executeQuery();
+			
+			personal_product_history pph = new personal_product_history();
+			Vector<Object[]> P = new Vector<Object[]>();
+			while(rs.next()) {
+				int i = 1;
+				pph.History_code = rs.getString(i++); pph.Bname = rs.getString(i++);
+				pph.Used_point = rs.getInt(i++); pph.Payment = rs.getInt(i++);
+				pph.Point = rs.getInt(i++); pph.Usable_point = rs.getInt(i++);
+				pph.Bdate = rs.getDate(i++); pph.Saled_num = rs.getInt(i++);
+				S.add(pph.toArray());	// 한 행씩 벡터에 담기
+				System.out.println(pph.History_code+" "+pph.Bname+" "+pph.Used_point+
+						" "+pph.Payment+" "+pph.Point+" "+pph.Usable_point+
+						" "+pph.Bdate+" "+pph.Saled_num);
+			}
+			serviceO = new Object[S.size()][];
+			productO = new Object[P.size()][];
+			for(int i = 0;i<S.size();i++) serviceO[i] = S.get(i);
+			for(int i = 0;i<P.size();i++) productO[i] = P.get(i);
+			
+			S.removeAllElements();
+			P.removeAllElements();
+			
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+
+	}
+
+	/* 리스너 함수 등록 */
+	private class MyactionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			JButton pressed = (JButton) e.getSource();
+			if (pressed.getText().equals("메뉴")) // "메뉴"클릭
+				new CMS_MainPage.MainPage(CustomerDetailsPage);
+			if (pressed.getText().equals("뒤로")) // "뒤로" 클릭
+				new All_Customer_info(CustomerDetailsPage);
+		}
+	}
+}

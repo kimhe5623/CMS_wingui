@@ -1,0 +1,56 @@
+package All_Customer;
+
+import java.sql.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
+public class DetailsOfCustomer {
+	private JFrame CustomerDetailsPage = null;
+	private int width = 1000, height = 500;
+	private Font font1 = new Font("monospace", Font.BOLD, 15);
+	private Font font2 = new Font("monospace", Font.BOLD, 20);
+	
+	/* 생성자 */
+	public DetailsOfCustomer(JFrame BeforePage , Object One_s_Info[]) {
+		BeforePage.setVisible(false);
+		CustomerDetailsPage = new JFrame("고객 상세정보");
+		CustomerDetailsPage.setBounds(300, 200, width, height);
+		CustomerDetailsPage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
+		MyactionListener listener = new MyactionListener();
+		/* 화면 디자인 */
+		JPanel TopPanel = new JPanel();
+		TopPanel.setSize(width, height/10);
+		TopPanel.setLayout(new BorderLayout());
+		JButton menuBtn = new JButton("메뉴");  menuBtn.setFont(font2);
+		menuBtn.addActionListener(listener);
+		TopPanel.add(menuBtn, BorderLayout.WEST);
+		
+		JButton BackBtn = new JButton("뒤로"); BackBtn.setFont(font2);
+		BackBtn.addActionListener(listener);
+		TopPanel.add(BackBtn, BorderLayout.EAST);
+		
+		JPanel CinfoPanel = new JPanel();
+		CinfoPanel.setSize(width, height/10*8);
+		
+		
+		
+		
+		
+		
+	}
+	
+	private class MyactionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			JButton pressed = (JButton)e.getSource();
+			if(pressed.getText().equals("메뉴")) // "메뉴"클릭
+				new CMS_MainPage.MainPage(CustomerDetailsPage);
+			if(pressed.getText().equals("뒤로"))	// "뒤로" 클릭
+				new All_Customer_info(CustomerDetailsPage);
+		}
+	}
+}

@@ -1,0 +1,27 @@
+package Designer;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+
+import All_Customer.datePanel;
+
+public class AddDesignerDialog {
+	
+	JDialog addCustomerD = null;
+	JFrame DialogOwner = null;
+	private JTextField tf[] = new JTextField[10];
+	private datePanel Birth = new datePanel();
+	
+	private JButton AddBtn = new JButton("추가");
+	private JButton CancelBtn = new JButton("취소");
+	private String tfName[] = { "*고객 아이디", "*이름", "성별", "*연락처", "*생일" };
+	private int width = 400, height = 300;
+	
+	String Values[] = new String[5];
+	
+	public AddDesignerDialog(JFrame BeforePage) {
+		
+	}
+}

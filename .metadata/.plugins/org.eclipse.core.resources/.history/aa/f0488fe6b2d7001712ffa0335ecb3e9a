@@ -1,0 +1,15 @@
+package All_Customer;
+
+import java.awt.*;
+import javax.swing.*;
+
+public class AddCustomerDialog extends JDialog {
+	private JTextField tf = new JTextField(10);
+	private JButton AddBtn = new JButton("추가");
+	private JButton CancelBtn = new JButton("취소");
+	public AddCustomerDialog(JFrame frame, String title) {
+		super(frame, title);
+		JPanel panel1 = new JPanel();
+		panel1.setLayout(new FlowLayout());
+	}
+}

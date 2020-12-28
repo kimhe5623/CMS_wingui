@@ -1,0 +1,70 @@
+/* 날짜 입력받는 Panel - 생일 입력받을 때 사용 */
+package All_Customer;
+
+
+import java.awt.FlowLayout;
+import java.awt.TextField;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import javax.swing.*;
+
+public class datePanel {
+
+	public JPanel panel = new JPanel();
+	public TextField tf[] = new TextField[3];
+	public String From;
+	public Date To = null;
+
+	public datePanel() {
+
+		tf[0].setColumns(5);
+		tf[1].setColumns(3);
+		tf[2].setColumns(3);
+
+		panel.setLayout(new FlowLayout());
+		panel.add(tf[0]);
+		panel.add(new JLabel("년"));
+		panel.add(tf[1]);
+		panel.add(new JLabel("월"));
+		panel.add(tf[2]);
+		panel.add(new JLabel("일"));
+		
+
+	}
+
+	public JPanel getPanel() {
+		return panel;
+	}
+	public boolean isNull() {	// 입력한 값이 null인지 여부 확인
+		if(tf[0].getText() == null || tf[1].getText() == null
+				|| tf[2].getText() == null) return true;
+		else			 return false;
+	}
+	public boolean setDate() {	// 날짜정보 올바른지 확인
+		
+		From = tf[0].getText() + tf[1].getText() + tf[2].getText();
+		SimpleDateFormat transFormat = new SimpleDateFormat("yyyymmdd");
+
+		try {
+			To = (Date) transFormat.parse(From);
+		} catch (ParseException e) {
+			JOptionPane.showMessageDialog(null, "날짜 정보를 확인하세요.","날짜 정보 오류"
+					, JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+			From = null;	// 초기화
+			
+			return false; // 오류
+		}
+		for(int i=0;i<3;i++) tf[i].setText(null);	// 초기화
+
+		return true;	// 정상적으로 함수 종료
+		
+	}
+	public String getDate() {
+		
+		return From;	// 받아온 날짜를 Date로 리턴
+		
+	}
+}

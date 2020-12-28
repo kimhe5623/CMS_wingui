@@ -1,0 +1,21 @@
+package All_Customer;
+
+import java.sql.*;
+import java.awt.*;
+import javax.swing.*;
+
+public class DetailsOfCustomer {
+	private JFrame CustomerDetailsPage = null;
+	private int width = 1000, height = 500;
+	public DetailsOfCustomer(JFrame BeforePage , Object One_s_Info[]) {
+		BeforePage.setVisible(false);
+		CustomerDetailsPage = new JFrame("고객 상세정보");
+		CustomerDetailsPage.setBounds(300, 200, width, height);
+		CustomerDetailsPage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		/* 화면 디자인 */
+		
+		
+		
+	}
+}

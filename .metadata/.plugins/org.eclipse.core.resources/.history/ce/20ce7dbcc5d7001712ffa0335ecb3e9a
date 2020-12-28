@@ -1,0 +1,48 @@
+/* 고객 정보 추가 다이얼로그*/
+package All_Customer;
+
+import java.awt.*;
+import javax.swing.*;
+
+import MainSource.datePanel;
+
+public class AddCustomerDialog extends JDialog {
+	private JTextField tf[] = new JTextField[10];
+	private JButton AddBtn = new JButton("추가");
+	private JButton CancelBtn = new JButton("취소");
+	private String tfName[] = { "고객 아이디", "이름", "성별", "연락처", "생일" };
+	
+	private Object Values[] = new Object[5];
+
+	public AddCustomerDialog(JFrame frame, String title) {
+		super(frame, title);	// frame: 다이얼로그 주인, title: 다이얼로그 title
+		tf[0].setPreferredSize(new Dimension(6,1));
+		tf[1].setPreferredSize(new Dimension(10,1));
+		tf[2].setPreferredSize(new Dimension(2,1));
+		tf[3].setPreferredSize(new Dimension(15,1));
+		datePanel Birth = new datePanel();
+		
+		// 다이얼로그 디자인
+		Box BoxForTf[] = new Box[5];
+		for(int i=0;i<5;i++) BoxForTf[i] = Box.createVerticalBox();		
+		for(int i=0;i<5;i++) BoxForTf[i].add(new JLabel(tfName[i]));
+		BoxForTf[0].add(tf[0]);	BoxForTf[1].add(tf[1]);
+		BoxForTf[2].add(tf[2]);	BoxForTf[3].add(tf[3]);
+		BoxForTf[4].add(Birth.getPanel());
+		
+		JPanel insertPanel = new JPanel();	// 입력 패널
+		insertPanel.setLayout(new FlowLayout());
+		for(int i =0;i<5;i++) insertPanel.add(BoxForTf[i]);
+		
+		JPanel BtnPanel = new JPanel();	// 버튼 패널
+		BtnPanel.setLayout(new FlowLayout());
+		BtnPanel.add(AddBtn);
+		BtnPanel.add(CancelBtn);
+		
+		this.setLayout(new BorderLayout());
+		this.add(insertPanel, BorderLayout.CENTER);	// 입력 패널 추가
+		this.add(BtnPanel, BorderLayout.SOUTH);	// 버튼 패널 추가
+
+		
+	}
+}

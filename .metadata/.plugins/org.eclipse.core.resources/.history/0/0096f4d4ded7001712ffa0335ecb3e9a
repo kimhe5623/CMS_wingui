@@ -1,0 +1,85 @@
+/* 고객 정보 추가 다이얼로그*/
+package All_Customer;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
+
+public class AddCustomerDialog {
+	JDialog addCustomerD;
+	private JTextField tf[] = new JTextField[10];
+	datePanel Birth = new datePanel();
+	
+	private JButton AddBtn = new JButton("추가");
+	private JButton CancelBtn = new JButton("취소");
+	private String tfName[] = { "*고객 아이디", "*이름", "성별", "*연락처", "*생일" };
+	
+	Object Values[] = new Object[5];
+
+	public AddCustomerDialog(JFrame frame, String title) {
+		addCustomerD = new JDialog(frame);	// frame: 다이얼로그 주인
+		addCustomerD.setTitle(title);	// title: 다이얼로그 title
+		tf[0].setPreferredSize(new Dimension(6,1));
+		tf[1].setPreferredSize(new Dimension(10,1));
+		tf[2].setPreferredSize(new Dimension(2,1));
+		tf[3].setPreferredSize(new Dimension(15,1));
+
+		
+		// 다이얼로그 디자인
+		Box BoxForTf[] = new Box[5];
+		for(int i=0;i<5;i++) BoxForTf[i] = Box.createVerticalBox();		
+		for(int i=0;i<5;i++) BoxForTf[i].add(new JLabel(tfName[i]));
+		BoxForTf[0].add(tf[0]);	BoxForTf[1].add(tf[1]);
+		BoxForTf[2].add(tf[2]);	BoxForTf[3].add(tf[3]);
+		BoxForTf[4].add(Birth.getPanel());
+		
+		JPanel insertPanel = new JPanel();	// 입력 패널
+		insertPanel.setLayout(new FlowLayout());
+		for(int i =0;i<5;i++) insertPanel.add(BoxForTf[i]);
+		
+		JPanel BtnPanel = new JPanel();	// 버튼 패널
+		BtnPanel.setLayout(new FlowLayout());
+		BtnPanel.add(AddBtn);
+		BtnPanel.add(CancelBtn);
+		
+		addCustomerD.setLayout(new BorderLayout());
+		addCustomerD.add(insertPanel, BorderLayout.CENTER);	// 입력 패널 추가
+		addCustomerD.add(BtnPanel, BorderLayout.SOUTH);	// 버튼 패널 추가
+		addCustomerD.add(new JLabel("* 가 표시된 것은 필수 입력 정보 입니다."), BorderLayout.NORTH);	//
+		
+		addCustomerD.setVisible(true);
+
+		MyActionListener listener = new MyActionListener();
+		AddBtn.addActionListener(listener);
+	}
+	
+	class MyActionListener implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			JButton pressedBtn = (JButton)e.getSource();
+			if(pressedBtn.getText().equals("추가")) {	 // 추가 버튼을 누르면
+				
+				if(tf[0].getText() == null || tf[1].getText() == null
+						|| tf[3].getText() == null || Birth.isNull() ) {	// 필수 입력 요소가 누락된 경우
+					JOptionPane.showMessageDialog(null, "필수 입력 정보를 확인하세요.","필수 입력 요소 누락"
+							, JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				for(int i=0;i<4;i++) Values[i] = tf[i].getText();
+				Values[4] = Birth.getDate();	// Date 값 받아왔으므로 Birth의 From null로 초기화
+				
+				for(int i=0;i<4;i++)	tf[i].setText(null);	// 초기화
+				addCustomerD.setVisible(false);
+			}
+			else if(pressedBtn.getText().equals("취소")) { // 취소 버튼을 누르면
+				addCustomerD.setVisible(false);
+			}
+			
+		}
+	}
+	
+
+}

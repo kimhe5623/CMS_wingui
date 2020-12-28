@@ -1,0 +1,12 @@
+/* 고객 정보 삭제 페이지 */
+package All_Customer;
+
+import java.sql.*;
+import java.awt.*;
+import javax.swing.*;
+
+public class DeleteCustomer {
+	public DeleteCustomer(JFrame BeforePage) {
+		
+	}
+}

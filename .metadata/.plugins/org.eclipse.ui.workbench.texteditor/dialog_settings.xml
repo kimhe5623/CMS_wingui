@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="di" key="selection"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="true" key="wrap"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="psh"/>
+			<item value="Customer"/>
+			<item value="All_Customer_page"/>
+			<item value="jTable"/>
+			<item value="panel1_1"/>
+			<item value="Cbirth_info"/>
+			<item value="rs."/>
+			<item value="C_info"/>
+			<item value="product"/>
+			<item value="service"/>
+			<item value="defaultProductTab"/>
+			<item value="defaultProduceTab"/>
+			<item value="defaultServiceTab"/>
+			<item value="CustomerDetailsPage"/>
+			<item value="Table"/>
+		</list>
+		<list key="replacehistory">
+			<item value="di"/>
+			<item value="Designer"/>
+			<item value="allDesignerP"/>
+			<item value="designerTab"/>
+			<item value="TopPanel"/>
+			<item value="thisMonth_info"/>
+			<item value="thisRs."/>
+			<item value="Cbirth_info"/>
+			<item value="nextMonth"/>
+			<item value="thisMonth"/>
+			<item value="defaultNextMonthTab"/>
+			<item value="defaultThisMonthTab"/>
+			<item value="BirthCustomerP"/>
+			<item value="BtnPanel"/>
+			<item value="dateString"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="393" key="DIALOG_WIDTH"/>
+		<item value="1|맑은 고딕|9.0|0|WINDOWS|1|-18|0|0|0|400|0|0|0|1|0|0|0|0|맑은 고딕" key="DIALOG_FONT_NAME"/>
+		<item value="523" key="DIALOG_HEIGHT"/>
+		<item value="734" key="DIALOG_X_ORIGIN"/>
+		<item value="120" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>

@@ -1,0 +1,9 @@
+package Designer;
+
+import javax.swing.JFrame;
+
+public class DeleteDesigner {
+	public DeleteDesigner(JFrame BeforePage) {
+		
+	}
+}
